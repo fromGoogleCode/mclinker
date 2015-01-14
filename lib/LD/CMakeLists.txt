@@ -37,6 +37,7 @@ add_mcld_library(MCLDLD
   LDSection.cpp
   LDSymbol.cpp
   MergeString.cpp
+  MergeStringReader.cpp
   MergedStringTable.cpp
   MsgHandler.cpp
   NamePool.cpp
