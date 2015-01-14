@@ -682,9 +682,9 @@ uint64_t MipsRelocator::getPLTAddress(ResolveInfo& rsym) {
   return getTarget().getPLT().addr() + plt->getOffset();
 }
 
-uint32_t MipsRelocator::getDebugStringOffset(Relocation& pReloc) const {
+uint32_t MipsRelocator::getMergeStringOffset(Relocation& pReloc) const {
   if (pReloc.type() != llvm::ELF::R_MIPS_32)
-    error(diag::unsupport_reloc_for_debug_string)
+    error(diag::unsupport_reloc_for_merge_string)
         << getName(pReloc.type()) << "mclinker@googlegroups.com";
   if (pReloc.symInfo()->type() == ResolveInfo::Section)
     return pReloc.target();
@@ -693,7 +693,7 @@ uint32_t MipsRelocator::getDebugStringOffset(Relocation& pReloc) const {
                pReloc.target() + pReloc.addend();
 }
 
-void MipsRelocator::applyDebugStringOffset(Relocation& pReloc,
+void MipsRelocator::applyMergeStringOffset(Relocation& pReloc,
                                            uint32_t pOffset) {
   pReloc.target() = pOffset;
 }
