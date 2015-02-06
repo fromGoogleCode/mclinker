@@ -2438,6 +2438,24 @@ void GNULDBackend::placeOutputSections(Module& pModule) {
 
 /// preMergeSections - hooks to be executed before merging sections
 void GNULDBackend::preMergeSections(Module& pModule) {
+  // check all the input sections. If an input section is a merge string
+  // section, set the corresponding output section to merge string section as
+  // well. The .debug_str sections are always mergeable strings.
+  ObjectBuilder builder(pModule);
+  Module::obj_iterator obj, objEnd = pModule.obj_end();
+  for (obj = pModule.obj_begin(); obj != objEnd; ++obj) {
+    LDContext::sect_iterator sect, sectEnd = (*obj)->context()->sectEnd();
+    for (sect = (*obj)->context()->sectBegin(); sect != sectEnd; ++sect) {
+      if (isMergeStringSection(**sect) ||
+          ((LDFileFormat::Debug == (*sect)->kind()) &&
+           ((*sect)->name().compare(".debug_str") == 0))) {
+        // get output section and set it as a merge string section as well
+        LDSection* out_sect =
+            (builder.CreateSectionFromInput(**obj, **sect)).second;
+        setMergeStringSection(*out_sect);
+      }
+    }
+  }
   doPreMergeSections(pModule);
 }
 
